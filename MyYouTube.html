@@ -1,0 +1,163 @@
+<html>
+<style>
+  .yt-video-link {
+    display: inline-grid;
+    font-family: sans-serif;
+    margin-top: 5px;
+    width: min-content;
+    color: white;
+    text-align: center;
+  }
+
+  .yt-thumbnail {
+    border-radius: 5px;
+    margin: 10px;
+    margin-bottom: 15px; 
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  body {
+    background: black;
+  }
+</style>
+
+<body>
+ <div id="player" style="display:none"></div>
+
+  <script>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+       player = new YT.Player(
+         'player', {
+           height: '0',
+           width: '0',
+           videoId: getVid(),
+           events: {
+             'onReady': onPlayerReady,
+             'onStateChange': onPlayerStateChange
+           }
+         });
+    }
+
+    function onPlayerReady(event) {
+       event.target.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+      console.log(event);
+
+      if (event.data == 0) {
+
+      }
+    }
+
+    var playlist = [];
+
+    function stopVideo() {
+       player.stopVideo();
+    }
+
+    function GetJSON(url, f) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        f(xhr.response);
+      };
+      xhr.send();
+    }
+
+    function refreshList(vid) {
+      //var url = 'com.coppertino.vox://youtube/track/play?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D' + vid;
+      //window.location.assign(url);
+      player.loadVideoById(vid);
+
+      var key = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
+      var api_url = 'https://www.googleapis.com/youtube/v3/search?' +
+                    'maxResults=50' +
+                    '&part=snippet' +
+                    '&relatedToVideoId=' + vid +
+                    '&type=video' +
+                    '&key=' + key;
+      var videos = "";
+      var f = function(response) {
+        console.log(response);
+        console.log("count: " + response["items"].length);
+
+        for (var i = 0; i < response["items"].length; i++) {
+          var ivid = response["items"][i]["id"]["videoId"];
+          var ititle = response["items"][i]["snippet"]["title"];
+          var ithumb = response["items"][i]["snippet"]["thumbnails"]["high"]["url"];
+
+          var a = document.createElement('a');
+          a.setAttribute('class', 'yt-video-link');
+          a.setAttribute('href', '#' + ivid);
+
+          var img = document.createElement('img');
+          var loadAndDisable = 'refreshList("' + ivid + '");'
+                             + 'document.getElementById("' + ivid + '")'
+                             + '.setAttribute("onClick", "player.loadVideoById(\\"' + ivid + '\\");");';
+          img.setAttribute('onClick', loadAndDisable);
+          img.setAttribute('src', ithumb);
+          img.setAttribute('class', 'yt-thumbnail');
+          img.setAttribute('id', ivid);
+          a.appendChild(img);
+          a.innerHTML += ititle;
+
+          main.appendChild(a);
+        }
+
+        var npt = response['nextPageToken'];
+        if (npt !== undefined) {
+            GetJSON(api_url + '&pageToken=' + npt, f);
+        }
+      }
+      GetJSON(api_url, f);
+    }
+
+    function getVid()
+    {
+      return window.location.hash.substring(1);
+    }
+
+    var main;
+    document.body.onload = function() {
+      main = document.createElement("div");
+      document.body.appendChild(main);
+
+      //var urlParams = new URLSearchParams(window.location.search);
+      //var vid = urlParams.get('vid');
+
+      refreshList(getVid());
+    }
+  </script>
+</body>
+</html>
+
+<!--
+
+var track_url = encodeURIComponent(document.URL);
+var api_url = "https://api.soundcloud.com/resolve?url=" + track_url + "&client_id=" + client_id;
+var xhr = new XMLHttpRequest();
+xhr.open('GET', api_url, true);
+xhr.responseType = 'json';
+xhr.onload = function() {
+    window.open(xhr.response["stream_url"] + "?client_id=" + client_id);
+};
+xhr.send();
+https://www.googleapis.com/youtube/v3/search?maxResults=50&pageToken=CDwQAA&part=snippet&relatedToVideoId=a9zvWR14KJQ&type=video&key=
+
+var vid = 'mLqfRAhZGbE';
+var url = 'com.coppertino.vox://youtube/track/play?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D' + vid;
+window.location.assign(url);
+
+
+-->
