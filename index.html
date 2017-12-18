@@ -214,7 +214,14 @@
             return 'enqueueToPlaylist("' + vid + '","' + title + '");';
         }
 
+        var addedVideos = [];
         function addVideoToVIew(view, vid, title, thumb) {
+            if (addedVideos[vid] !== undefined) {
+              console.log("Already added video: " + title);
+              return;
+            }
+            addedVideos[vid] = true;
+
             var img = document.createElement('img');
             var onclick =
                 makeEnqueueScript(vid, title) +
