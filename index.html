@@ -6,6 +6,7 @@
             display: inline-grid;
             font-family: sans-serif;
             margin-top: 5px;
+            margin: 5px;
             width: min-content;
             color: white;
             text-align: center;
@@ -13,7 +14,6 @@
 
         .yt-thumbnail {
             border-radius: 5px;
-            margin: 10px;
             margin-bottom: 15px;
         }
 
@@ -188,9 +188,6 @@
                 '&key=' + key;
 
             var f = function(response) {
-                //console.log(response);
-                console.log("count: " + response["items"].length);
-
                 for (var i = 0; i < response["items"].length; i++) {
                     addVideoToVIew(
                         view,
