@@ -48,6 +48,15 @@
             padding-top: 250px;
         }
 
+        .yt-video-counter {
+          font-family: sans-serif;
+          color: white;
+          background: black;
+          position: fixed;
+          right: 0px;
+          top: 0px;
+        }
+
         a {
             text-decoration: none;
         }
@@ -59,7 +68,6 @@
         body {
             background: black;
         }
-
     </style>
 
     <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.1.min.js"></script>
@@ -73,6 +81,8 @@
         <div id="playlist" class="yt-playlist"></div>
     </div>
     <div id="mainview" class="yt-mainview"></div>
+    <div id="video-counter" class="yt-video-counter"></div>
+
 
     <script>
         $("#top-panel").resizable({
@@ -214,12 +224,16 @@
             return 'enqueueToPlaylist("' + vid + '","' + title + '");';
         }
 
+        var videoCount = 0;
         var addedVideos = [];
         function addVideoToVIew(view, vid, title, thumb) {
             if (addedVideos[vid] !== undefined) {
               console.log("Already added video: " + title);
               return;
             }
+            videoCount++;
+            $("#video-counter")[0].innerHTML = "" + videoCount;
+
             addedVideos[vid] = true;
 
             var img = document.createElement('img');
