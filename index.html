@@ -12,40 +12,57 @@
             text-align: center;
         }
 
+        .yt-video-link-followed {
+            display: inline-grid;
+            font-family: sans-serif;
+            margin-top: 5px;
+            margin: 5px;
+            width: min-content;
+            color: blue;
+            text-align: center;
+        }
+
         .yt-thumbnail {
             border-radius: 5px;
             margin-bottom: 15px;
         }
 
         .yt-player {
-            display: nonse;
             float: left;
+            height: 100%;
         }
 
         .yt-playlist {
             color: white;
             font-family: sans-serif;
-            float: right;
+            float: left;
             overflow: scroll;
             overflow-x: hidden;
             overflow-y: scroll;
-            width: 50%;
             padding: 5px;
+            width: 45%;
         }
 
         .yt-top-panel {
             top: 0px;
             position: fixed !important;
             background: black;
-            display: inline-flex;
+            display: initial;
             width: 100%;
             height: 250px;
             overflow: auto;
             border-bottom: 3px solid white;
+            grid-template-columns: 50% 50%;
+            grid-template-rows: 50px auto;
         }
 
         .yt-mainview {
             padding-top: 250px;
+        }
+
+        .yt-search {
+            width: 20em;
+            margin: 3px;
         }
 
         .yt-video-counter {
@@ -62,10 +79,6 @@
             text-decoration: none;
         }
 
-        a:visited {
-            color: blue;
-        }
-
         body {
             background: black;
         }
@@ -79,6 +92,7 @@
 
 <body>
     <div id="top-panel" class="yt-top-panel">
+        <input id="search" type="search" class="yt-search" />
         <div id="player" class="yt-player"></div>
         <div id="playlist" class="yt-playlist"></div>
     </div>
@@ -86,6 +100,15 @@
     <div id="video-counter" class="yt-video-counter"></div>
 
     <script>
+        $("#search").keypress(function(e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                e.preventDefault();
+                var query = e.srcElement.value;
+                addSearchVideos(query);
+            }
+        });
+
         $("#top-panel").resizable({
             handles: 's'
         });
@@ -105,11 +128,10 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player;
-
         function onYouTubeIframeAPIReady() {
             player = new YT.Player(
                 'player', {
-                    height: 'auto',
+                    height: '100%',
                     width: '50%',
                     videoId: getVid(),
                     events: {
@@ -124,11 +146,8 @@
         }
 
         function onPlayerStateChange(event) {
-            console.log("State change: " + event);
-
             // The video has finished playing.
             if (event.data == 0) {
-                console.log("Finished playing.")
                 dequeueFromPlaylist();
             }
         }
@@ -188,80 +207,83 @@
             xhr.send();
         }
 
-        function addRelatedVideos(view, vid) {
-            var key = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
-            var api_url = 'https://www.googleapis.com/youtube/v3/search?' +
-                'maxResults=50' +
-                '&part=snippet' +
-                '&relatedToVideoId=' + vid +
-                '&type=video' +
-                '&key=' + key;
+        function addRelatedVideos(vid) {
+            var url =
+                'https://www.googleapis.com/youtube/v3/search?' +
+                'maxResults=50&part=snippet&type=video' +
+                '&key=AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8' +
+                '&relatedToVideoId=' + vid;
+            addVideos(url, 100);
+        }
 
+        function addSearchVideos(query) {
+            var url =
+                'https://www.googleapis.com/youtube/v3/search?' +
+                'maxResults=50&part=snippet&type=video' +
+                '&key=AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8' +
+                '&q=' + encodeURIComponent(query);
+            addVideos(url, 300);
+        }
+
+        function addVideos(url, max) {
+            var count = 0;
             var f = function(response) {
-                for (var i = 0; i < response["items"].length; i++) {
-                    addVideoToVIew(
-                        view,
-                        response["items"][i]["id"]["videoId"],
-                        response["items"][i]["snippet"]["title"],
-                        response["items"][i]["snippet"]["thumbnails"]["high"]["url"]
-                    );
+                for (var i = 0; i < response["items"].length && count < max; i++) {
+                    var vid = response["items"][i]["id"]["videoId"];
+                    var title = response["items"][i]["snippet"]["title"];
+                    var thumb = response["items"][i]["snippet"]["thumbnails"]["high"]["url"];
+                    addVideoToView(mainView, vid, title, thumb);
+                    count++;
                 }
-
+                if (count >= max) {
+                    return;
+                }
                 var npt = response['nextPageToken'];
                 if (npt !== undefined) {
-                    GetJSON(api_url + '&pageToken=' + npt, f);
+                    GetJSON(url + '&pageToken=' + npt, f);
                 }
             }
-            GetJSON(api_url, f);
+            GetJSON(url, f);
         }
 
-        function disableLoadingRelated(vid, title) {
-            return 'document.getElementById("' + vid +
-                '").setAtribute("onclick","' + makeEnqueueScript(vid, title) + '")';
-        }
-
-        function makeEnqueueScript(vid, title) {
-            return 'enqueueToPlaylist("' + vid + '","' + title + '");';
-        }
-
+        var mainView;
         var videoCount = 0;
         var addedVideos = [];
 
-        function addVideoToVIew(view, vid, title, thumb) {
+        function addVideoToView(view, vid, title, thumb) {
             if (addedVideos[vid] !== undefined) {
-                console.log("Already added video: " + title);
                 return;
             }
+            addedVideos[vid] = true;
             videoCount++;
             $("#video-counter")[0].innerHTML = "" + videoCount;
 
-            addedVideos[vid] = true;
-
+            var iid = "IMG" + vid;
             var img = document.createElement('img');
-            var onclick =
-                makeEnqueueScript(vid, title) +
-                'addRelatedVideos("' + vid + '");' +
-                disableLoadingRelated(vid, title);
-            //img.setAttribute('onClick', onclick);
             img.setAttribute('src', thumb);
             img.setAttribute('class', 'yt-thumbnail');
-            img.setAttribute('id', vid);
+            img.setAttribute('id', iid);
 
+            var aid = "A" + vid;
             var a = document.createElement('a');
             a.setAttribute('class', 'yt-video-link');
-            a.setAttribute('href', '#' + vid);
             a.appendChild(img);
+            a.setAttribute('id', aid);
             a.innerHTML += title;
-
             view.appendChild(a);
 
-            var ii = document.getElementById(vid);
-            ii.onclick = function() {
+            var ev = document.getElementById(iid);
+            var ea = document.getElementById(aid);
+
+            ev.onclick = function() {
                 enqueueToPlaylist(vid, title);
-                addRelatedVideos(view, vid);
-                ii.onclick = function() {
-                    e
-nqueueToPlaylist(vid, title);
+                addRelatedVideos(vid);
+
+                window.location.hash = "#" + vid;
+                ea.setAttribute('class', 'yt-video-link-followed');
+
+                ev.onclick = function() {
+                    enqueueToPlaylist(vid, title);
                 };
             };
         }
@@ -271,10 +293,9 @@ nqueueToPlaylist(vid, title);
         }
 
         document.body.onload = function() {
-            var mainView = document.getElementById("mainview");
-            addRelatedVideos(mainView, getVid());
+            mainView = document.getElementById("mainview");
+            addRelatedVideos(getVid());
         }
-
     </script>
 </body>
 
