@@ -97,7 +97,7 @@
 
 <body>
     <div id="top-panel" class="yt-top-panel">
-        <input id="search" type="search" class="yt-search" />
+        <input id="search" type="search" class="yt-search" autofocus/>
         <div id="player" class="yt-player"></div>
         <div id="playlist" class="yt-playlist"></div>
     </div>
@@ -233,13 +233,14 @@
         function addVideos(url, max) {
             var count = 0;
             var f = function(response) {
-                if (response.length === undefined) {
+                if (response.items === undefined) {
                   return;
                 }
-                for (var i = 0; i < response["items"].length && count < max; i++) {
-                    var vid = response["items"][i]["id"]["videoId"];
-                    var title = response["items"][i]["snippet"]["title"];
-                    var thumb = response["items"][i]["snippet"]["thumbnails"]["high"]["url"];
+                for (var i = 0; i < response.items.length && count < max; i++) {
+                    var item = response.items[i];
+                    var vid = item["id"]["videoId"];
+                    var title = item["snippet"]["title"];
+                    var thumb = item["snippet"]["thumbnails"]["high"]["url"];
                     addVideoToView(mainView, vid, title, thumb);
                     count++;
                 }
