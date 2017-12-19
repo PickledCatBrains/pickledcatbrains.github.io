@@ -212,11 +212,12 @@
             xhr.send();
         }
 
+        var apiKey = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
         function addRelatedVideos(vid) {
             var url =
                 'https://www.googleapis.com/youtube/v3/search?' +
                 'maxResults=50&part=snippet&type=video' +
-                '&key=AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8' +
+                '&key=' + apiKey +
                 '&relatedToVideoId=' + vid;
             addVideos(url, 200);
         }
@@ -225,7 +226,7 @@
             var url =
                 'https://www.googleapis.com/youtube/v3/search?' +
                 'maxResults=50&part=snippet&type=video' +
-                '&key=AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8' +
+                '&key=' + apiKey +
                 '&q=' + encodeURIComponent(query);
             addVideos(url, 300);
         }
