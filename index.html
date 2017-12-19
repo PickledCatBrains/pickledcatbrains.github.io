@@ -66,7 +66,7 @@
         }
 
         .yt-search {
-            width: 20em;
+            width: 30em;
             margin: 3px;
         }
 
@@ -97,6 +97,7 @@
 
 <body>
     <div id="top-panel" class="yt-top-panel">
+        <button onclick="player.seekTo(player.getDuration());">Skip</button>
         <input id="search" type="search" class="yt-search" autofocus/>
         <div id="player" class="yt-player"></div>
         <div id="playlist" class="yt-playlist"></div>
@@ -206,7 +207,7 @@
             renderPlaylist();
 
             if (entry === undefined) {
-                vidPlaying = null;
+                vidPlaying = undefined;
                 return;
             }
 
