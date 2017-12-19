@@ -133,6 +133,8 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player;
+        var vidPlaying;
+        var titlePlaying;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player(
                 'player', {
@@ -180,11 +182,19 @@
         }
 
         function enqueueToPlaylist(vid, title) {
-            playlist.push({
-                vid: vid,
-                title: title
-            });
+            if (vidPlaying !== undefined) {
+                if (titlePlaying === undefined) {
+                    titlePlaying = player.getVideoData().title;
+                }
+                playlist.push({
+                    vid: vidPlaying,
+                    title: titlePlaying
+                });
+            }
             renderPlaylist();
+
+            vidPlaying = vid;
+            titlePlaying = title;
 
             if (player !== undefined) {
                 player.loadVideoById(vid);
@@ -195,7 +205,12 @@
             var entry = playlist.pop();
             renderPlaylist();
 
-            if (player !== undefined && entry !== undefined) {
+            if (entry === undefined) {
+                vidPlaying = null;
+                return;
+            }
+
+            if (player !== undefined) {
                 player.loadVideoById(entry["vid"]);
             }
         }
@@ -268,13 +283,13 @@
             videoCount++;
             $("#video-counter")[0].innerHTML = "" + videoCount;
 
-            var iid = "IMG" + vid;
+            var iid = "IMG_" + vid;
             var img = document.createElement('img');
             img.setAttribute('src', thumb);
             img.setAttribute('class', 'yt-thumbnail');
             img.setAttribute('id', iid);
 
-            var aid = "A" + vid;
+            var aid = "A_" + vid;
             var a = document.createElement('a');
             a.setAttribute('class', 'yt-video-link');
             a.appendChild(img);
@@ -304,7 +319,9 @@
 
         document.body.onload = function() {
             mainView = document.getElementById("mainview");
-            addRelatedVideos(getVid());
+            vidPlaying = getVid();
+            addRelatedVideos(vidPlaying);
+            player.loadVideoById(vidPlaying);
         }
     </script>
 </body>
