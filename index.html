@@ -80,6 +80,15 @@
             margin: 3px;
         }
 
+        .yt-skip-button {
+            position:fixed;
+            right: 5px;
+            bottom: 5px;
+            padding: 5px;
+            background: black;
+            color: white;
+        }
+
         a {
             text-decoration: none;
         }
@@ -97,12 +106,12 @@
 
 <body>
     <div id="top-panel" class="yt-top-panel">
-        <button onclick="player.seekTo(player.getDuration());">Skip</button>
         <input id="search" type="search" class="yt-search" autofocus/>
         <div id="player" class="yt-player"></div>
         <div id="playlist" class="yt-playlist"></div>
     </div>
     <div id="mainview" class="yt-mainview"></div>
+    <button onclick="player.seekTo(player.getDuration());" class="yt-skip-button">Skip</button>
     <div id="video-counter" class="yt-video-counter"></div>
 
     <script>
