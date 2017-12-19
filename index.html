@@ -233,7 +233,7 @@
         function addVideos(url, max) {
             var count = 0;
             var f = function(response) {
-                if (response == undefined) {
+                if (response.length === undefined) {
                   return;
                 }
                 for (var i = 0; i < response["items"].length && count < max; i++) {
