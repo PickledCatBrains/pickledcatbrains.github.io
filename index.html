@@ -233,6 +233,9 @@
         function addVideos(url, max) {
             var count = 0;
             var f = function(response) {
+                if (response == undefined) {
+                  return;
+                }
                 for (var i = 0; i < response["items"].length && count < max; i++) {
                     var vid = response["items"][i]["id"]["videoId"];
                     var title = response["items"][i]["snippet"]["title"];
