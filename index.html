@@ -235,7 +235,7 @@
                 'maxResults=50&part=snippet&type=video' +
                 '&key=' + apiKey +
                 '&relatedToVideoId=' + vid;
-            addVideos(url, 200);
+            addVideos(url, 200, false);
         }
 
         function addSearchVideos(query) {
@@ -244,10 +244,10 @@
                 'maxResults=50&part=snippet&type=video' +
                 '&key=' + apiKey +
                 '&q=' + encodeURIComponent(query);
-            addVideos(url, 300);
+            addVideos(url, 300, true);
         }
 
-        function addVideos(url, max) {
+        function addVideos(url, max, prepend) {
             var count = 0;
             var f = function(response) {
                 if (response.items === undefined) {
@@ -258,7 +258,7 @@
                     var vid = item["id"]["videoId"];
                     var title = item["snippet"]["title"];
                     var thumb = item["snippet"]["thumbnails"]["high"]["url"];
-                    addVideoToView(mainView, vid, title, thumb);
+                    addVideoToView(mainView, vid, title, thumb, prepend);
                     count++;
                 }
                 if (count >= max) {
@@ -276,7 +276,7 @@
         var videoCount = 0;
         var addedVideos = [];
 
-        function addVideoToView(view, vid, title, thumb) {
+        function addVideoToView(view, vid, title, thumb, prepend) {
             if (addedVideos[vid] !== undefined) {
                 return;
             }
@@ -296,7 +296,13 @@
             a.appendChild(img);
             a.setAttribute('id', aid);
             a.innerHTML += title;
-            view.appendChild(a);
+
+            if (prepend) {
+              view.prepend(a);
+            }
+            else {
+              view.appendChild(a);
+            }
 
             var ev = document.getElementById(iid);
             var ea = document.getElementById(aid);
