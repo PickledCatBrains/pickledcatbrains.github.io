@@ -111,6 +111,7 @@
             if (code == 13) {
                 e.preventDefault();
                 var query = e.srcElement.value;
+                e.srcElement.value = "";
                 addSearchVideos(query);
             }
         });
