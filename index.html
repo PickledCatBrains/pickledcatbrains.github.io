@@ -190,7 +190,7 @@
             var entry = playlist.pop();
             renderPlaylist();
 
-            if (player !== undefined) {
+            if (player !== undefined && entry !== undefined) {
                 player.loadVideoById(entry["vid"]);
             }
         }
