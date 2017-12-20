@@ -34,6 +34,9 @@
         .yt-player {
             float: left;
             height: 100%;
+            width: 50%;
+            border-bottom-right-radius: 15px;
+            overflow: hidden;
         }
         .yt-playlist {
             color: #DDDDDD;
@@ -138,7 +141,9 @@
 <body>
     <div id="top-panel" class="yt-top-panel">
         <input id="search" type="search" class="yt-search mousetrap" autofocus/>
-        <div id="player" class="yt-player"></div>
+        <div class="yt-player">
+        <div id="player"></div>
+        </div>
         <div id="playlist" class="yt-playlist scrollbar-light"></div>
     </div>
 
@@ -212,7 +217,7 @@
             player = new YT.Player(
                 'player', {
                     height: '100%',
-                    width: '50%',
+                    width: '100%',
                     playerVars: {
                         'autoplay': 1,
                         'controls': 1,
