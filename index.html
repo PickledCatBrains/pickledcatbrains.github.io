@@ -185,7 +185,7 @@
             player.stopVideo();
         }
         function skipVideo() {
-            player.seekTo(player.getDuration());
+            dequeueFromPlaylist();
         }
         function seekToOffset(offset) {
             var currentTime = player.getCurrentTime();
