@@ -126,7 +126,7 @@
         <div id="playlist" class="yt-playlist"></div>
     </div>
     <div id="mainview" class="yt-mainview"></div>
-    <button onclick="resizeHeader(0);" class="yt-hide-button">Hide</button>
+    <button id="hide-button" onclick="resizeHeader(0);" class="yt-hide-button">Hide</button>
     <button onclick="player.seekTo(player.getDuration());" class="yt-skip-button">Skip</button>
     <div id="video-counter" class="yt-video-counter"></div>
 
@@ -153,9 +153,11 @@
             if (height == 0) {
                 if (tp.clientHeight == 0) {
                     height = headerHeight;
+                    $("#hide-button")[0].innerHTML = "Hide";
                 } else {
                     headerHeight = tp.clientHeight;
                     height = 0;
+                    $("#hide-button")[0].innerHTML = "Show";
                 }
             }
 
@@ -274,7 +276,7 @@
         }
 
         var apiKey = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
-        function addRelatedVideos(vid) {
+        function addRelatedVideos(vid, count) {
             var url =
                 'https://www.googleapis.com/youtube/v3/search?' +
                 'maxResults=50&part=snippet&type=video' +
@@ -294,7 +296,7 @@
 
         function addVideos(url, max, prepend) {
             var count = 0;
-            var f = function(response) {
+            var callback = function(response) {
                 if (response.items === undefined) {
                   return;
                 }
@@ -311,10 +313,10 @@
                 }
                 var npt = response['nextPageToken'];
                 if (npt !== undefined) {
-                    GetJSON(url + '&pageToken=' + npt, f);
+                    GetJSON(url + '&pageToken=' + npt, callback);
                 }
             }
-            GetJSON(url, f);
+            GetJSON(url, callback);
         }
 
         var mainView;
