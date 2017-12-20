@@ -161,10 +161,8 @@
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
         var player;
-        var vidPlaying;
-        var titlePlaying;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player(
                 'player', {
@@ -207,11 +205,6 @@
             player.seekTo(currentTime);
         }
 
-        function fullscreen() {
-            var button = $("#ytp-fullscreen-button");
-            button.click();
-        }
-
         function playInVox(vid) {
             var url = 'com.coppertino.vox://youtube/track/play?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D' + vid;
             window.location.assign(url);
@@ -220,6 +213,8 @@
         // Playlist
         ////////////////////////////////////////////
         var playlist = [];
+        var vidPlaying = null;
+        var titlePlaying;
 
         function renderPlaylist() {
             var view = document.getElementById("playlist");
@@ -231,7 +226,7 @@
         }
 
         function enqueueToPlaylist(vid, title) {
-            if (vidPlaying !== undefined) {
+            if (vidPlaying !== null) {
                 if (titlePlaying === undefined) {
                     titlePlaying = player.getVideoData().title;
                 }
@@ -240,8 +235,8 @@
                     title: titlePlaying,
                     time: player.getCurrentTime()
                 });
+                renderPlaylist();
             }
-            renderPlaylist();
 
             vidPlaying = vid;
             titlePlaying = title;
@@ -253,15 +248,16 @@
 
         function dequeueFromPlaylist() {
             var entry = playlist.pop();
-            renderPlaylist();
-
             if (entry === undefined) {
-                vidPlaying = undefined;
+                vidPlaying = null;
                 return;
             }
+            renderPlaylist();
 
+            vidPlaying = entry["vid"];
+            titlePlaying = entry["title"];
             if (player !== undefined) {
-                player.loadVideoById(entry["vid"]);
+                player.loadVideoById(vidPlaying);
                 player.seekTo(entry["time"]);
             }
         }
