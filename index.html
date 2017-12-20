@@ -132,6 +132,21 @@
         }
         var headerHeight = 0;
         var mainView = document.getElementById("mainview");
+        var zoom = 100;
+        var zoomStep = 5;
+        var zoomMin = 5;
+        var zoomMax = 800;
+
+        function zoomBy(percent) {
+            zoom += percent;
+            zoom = Math.max(zoom, zoomMin);
+            zoom = Math.min(zoom, zoomMax);
+
+            var tp = $("#top-panel")[0];
+            var height = tp.clientHeight;
+            mainView.style.zoom = zoom + "%";
+            mainview.style.paddingTop = parseInt(height) * (100.0 / zoom);
+        }
         function resizeHeader(height) {
             var tp = $("#top-panel")[0];
 
@@ -146,7 +161,7 @@
             var mainview = $("#mainview")[0];
             tp.style.width = "100%";
             tp.style.height = height;
-            mainview.style.paddingTop = height;
+            mainview.style.paddingTop = parseInt(height) * (100.0 / zoom);
         }
         ////////////////////////////////////////////
         // YouTube Player
@@ -408,14 +423,21 @@
             Mousetrap.bind('ctrl+up', function(e) {
                 increaseVolume();
             });
-            Mousetrap.bind('ctrl+down', function(e) {
-                decreaseVolume();
+            Mousetrap.bind('ctrl+=', function(e) {
+                zoomBy(+zoomStep);
+            });
+            Mousetrap.bind('ctrl+-', function(e) {
+                zoomBy(-zoomStep);
             });
         }
         function configure() {
+            apiKey = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
             videosPerSearch = 300;
             videosPerRelated = 200;
-            apiKey = 'AIzaSyDaPnpShE8nxyGs-QjX55r5qREcQhub-j8';
+            zoom = 100;
+            zoomStep = 5;
+            zoomMin = 5;
+            zoomMax = 800;
         }
         document.body.onload = function() {
             configure();
