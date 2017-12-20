@@ -85,6 +85,19 @@
             right: 5px;
             bottom: 5px;
             padding: 5px;
+            width: 50px;
+            height: 25px;
+            background: black;
+            color: white;
+        }
+
+        .yt-hide-button {
+            position:fixed;
+            right: 5px;
+            bottom: 35px;
+            width: 50px;
+            height: 25px;
+            padding: 5px;
             background: black;
             color: white;
         }
@@ -111,6 +124,7 @@
         <div id="playlist" class="yt-playlist"></div>
     </div>
     <div id="mainview" class="yt-mainview"></div>
+    <button onclick="resizeHeader(0);" class="yt-hide-button">Hide</button>
     <button onclick="player.seekTo(player.getDuration());" class="yt-skip-button">Skip</button>
     <div id="video-counter" class="yt-video-counter"></div>
 
@@ -129,11 +143,28 @@
             handles: 's'
         });
 
-        $("#top-panel").resize(function() {
-            var mainview = $("#mainview")[0];
+        var headerHeight = 0;
+
+        function resizeHeader(height) {
             var tp = $("#top-panel")[0];
+
+            if (height == 0) {
+                if (tp.clientHeight == 0) {
+                    height = headerHeight;
+                } else {
+                    headerHeight = tp.clientHeight;
+                    height = 0;
+                }
+            }
+
+            var mainview = $("#mainview")[0];
             tp.style.width = "100%";
-            mainview.style.paddingTop = tp.style.height;
+            tp.style.height = height;
+            mainview.style.paddingTop = height;
+        }
+
+        $("#top-panel").resize(function(){
+            resizeHeader($("#top-panel")[0].style.height);
         });
 
         // YouTube Player
@@ -224,7 +255,7 @@
 
             if (player !== undefined) {
                 player.loadVideoById(entry["vid"]);
-                player.seekTo(entry["time"]);            
+                player.seekTo(entry["time"]);
             }
         }
 
