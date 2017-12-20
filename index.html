@@ -199,7 +199,8 @@
                 }
                 playlist.push({
                     vid: vidPlaying,
-                    title: titlePlaying
+                    title: titlePlaying,
+                    time: player.getCurrentTime()
                 });
             }
             renderPlaylist();
@@ -223,6 +224,7 @@
 
             if (player !== undefined) {
                 player.loadVideoById(entry["vid"]);
+                player.seekTo(entry["time"]);            
             }
         }
 
