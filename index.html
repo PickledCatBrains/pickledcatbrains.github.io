@@ -230,6 +230,8 @@
             window.location.hash = "#" + vid;
             if (player !== undefined) {
                 player.loadVideoById(vid);
+                // Ignore any progress that might have been saved by YouTube.
+                seekTo(0);
             }
         }
         function dequeueVideo() {
