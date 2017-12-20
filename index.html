@@ -195,14 +195,18 @@
             player.stopVideo();
         }
 
-        function nextVideo() {
+        function skipVideo() {
             player.seekTo(player.getDuration());
         }
 
-        function seekVideo(offset) {
+        function seekToOffset(offset) {
             var currentTime = player.getCurrentTime();
             currentTime += offset;
             player.seekTo(currentTime);
+        }
+
+        function seekToPercent(percentage) {
+            player.seekTo(player.getDuration() * percentage / 100);
         }
 
         function playInVox(vid) {
@@ -214,7 +218,7 @@
         ////////////////////////////////////////////
         var playlist = [];
         var vidPlaying = null;
-        var titlePlaying;
+        var titlePlaying = null;
 
         function renderPlaylist() {
             var view = document.getElementById("playlist");
@@ -227,7 +231,7 @@
 
         function enqueueToPlaylist(vid, title) {
             if (vidPlaying !== null) {
-                if (titlePlaying === undefined) {
+                if (titlePlaying === null) {
                     titlePlaying = player.getVideoData().title;
                 }
                 playlist.push({
@@ -370,30 +374,62 @@
             return window.location.hash.substring(1);
         }
 
+        function setupShortcuts() {
+            Mousetrap.bind('ctrl+n', function(e) {
+                skipVideo();
+            });
+            Mousetrap.bind('ctrl+h', function(e) {
+                resizeHeader(0);
+            });
+            Mousetrap.bind('ctrl+,', function(e) {
+                seekToOffset(-10.0);
+            });
+            Mousetrap.bind('ctrl+.', function(e) {
+                seekToOffset(+10.0);
+            });
+            Mousetrap.bind('ctrl+f', function(e) {
+                focusSearch();
+            });
+            Mousetrap.bind('ctrl+v', function(e) {
+                playInVox(vidPlaying);
+            });
+            Mousetrap.bind('ctrl+0', function(e) {
+                seekToPercent(0);
+            });
+            Mousetrap.bind('ctrl+1', function(e) {
+                seekToPercent(10);
+            });
+            Mousetrap.bind('ctrl+2', function(e) {
+                seekToPercent(20);
+            });
+            Mousetrap.bind('ctrl+3', function(e) {
+                seekToPercent(30);
+            });
+            Mousetrap.bind('ctrl+4', function(e) {
+                seekToPercent(40);
+            });
+            Mousetrap.bind('ctrl+5', function(e) {
+                seekToPercent(50);
+            });
+            Mousetrap.bind('ctrl+6', function(e) {
+                seekToPercent(60);
+            });
+            Mousetrap.bind('ctrl+7', function(e) {
+                seekToPercent(70);
+            });
+            Mousetrap.bind('ctrl+8', function(e) {
+                seekToPercent(80);
+            });
+            Mousetrap.bind('ctrl+9', function(e) {
+                seekToPercent(90);
+            });
+        }
+
         document.body.onload = function() {
             mainView = document.getElementById("mainview");
             vidPlaying = getVid();
             addRelatedVideos(vidPlaying);
-
-            Mousetrap.bind('ctrl+n', function(e) {
-                nextVideo();
-            });
-
-            Mousetrap.bind('ctrl+h', function(e) {
-                resizeHeader(0);
-            });
-
-            Mousetrap.bind('ctrl+,', function(e) {
-                seekVideo(-10.0);
-            });
-
-            Mousetrap.bind('ctrl+.', function(e) {
-                seekVideo(+10.0);
-            });
-
-            Mousetrap.bind('ctrl+f', function(e) {
-                focusSearch();
-            });
+            setupShortcuts();
         }
     </script>
 </body>
