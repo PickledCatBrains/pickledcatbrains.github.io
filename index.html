@@ -173,19 +173,20 @@
                 });
         }
         function onPlayerReady(event) {
-            event.target.playVideo();
+            var title = player.getVideoData().title;
+            queueVideo(getVidFromUrl(), title);
         }
         function onPlayerStateChange(event) {
             // The video has finished playing.
             if (event.data == 0) {
-                dequeueFromPlaylist();
+                dequeueVideo();
             }
         }
         function stopVideo() {
             player.stopVideo();
         }
         function skipVideo() {
-            dequeueFromPlaylist();
+            dequeueVideo();
         }
         function seekToOffset(offset) {
             var currentTime = player.getCurrentTime();
@@ -210,39 +211,40 @@
             view.innerHTML = "";
 
             for (var i = playlist.length - 1; i >= 0; i--) {
+                if (i == playlist.length - 1) {
+                    view.innerHTML = "&#x25b6; ";
+                }
                 view.innerHTML += playlist[i]["title"] + '</br>';
             }
         }
-        function enqueueToPlaylist(vid, title) {
-            if (vidPlaying !== null) {
-                if (titlePlaying === null) {
-                    titlePlaying = player.getVideoData().title;
-                }
-                playlist.push({
-                    vid: vidPlaying,
-                    title: titlePlaying,
-                    time: player.getCurrentTime()
-                });
-                renderPlaylist();
+        function queueVideo(vid, title) {
+            if (playlist.length > 0) {
+                playlist[playlist.length - 1]["time"] = player.getCurrentTime();
             }
-            vidPlaying = vid;
-            titlePlaying = title;
-
+            playlist.push({
+                vid: vid,
+                title: title,
+                time: 0
+            });
+            renderPlaylist();
+            window.location.hash = "#" + vid;
             if (player !== undefined) {
                 player.loadVideoById(vid);
             }
         }
-        function dequeueFromPlaylist() {
-            var entry = playlist.pop();
-            if (entry === undefined) {
-                vidPlaying = null;
+        function dequeueVideo() {
+            playlist.pop();
+            renderPlaylist();
+            if (playlist.length == 0) {
+                seekToPercent(100);
                 return;
             }
-            renderPlaylist();
-            vidPlaying = entry["vid"];
-            titlePlaying = entry["title"];
+            var entry = playlist[playlist.length - 1];
+            var vid = entry["vid"];
+            window.location.hash = "#" + vid;
+
             if (player !== undefined) {
-                player.loadVideoById(vidPlaying);
+                player.loadVideoById(vid);
                 player.seekTo(entry["time"]);
             }
         }
@@ -338,14 +340,11 @@
             var ea = document.getElementById(aid);
 
             ev.onclick = function() {
-                enqueueToPlaylist(vid, title);
+                queueVideo(vid, title);
                 addRelatedVideos(vid);
-
-                window.location.hash = "#" + vid;
                 ea.setAttribute('class', 'yt-video-link-followed');
-
                 ev.onclick = function() {
-                    enqueueToPlaylist(vid, title);
+                    queueVideo(vid, title);
                 };
             };
         }
