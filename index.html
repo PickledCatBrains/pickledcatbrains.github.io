@@ -40,6 +40,11 @@
             overflow-y: scroll;
             padding: 5px;
             width: 45%;
+            position: absolute;
+            bottom: 0px;
+            right: 0;
+            top: 25px;
+            left: 50%;
         }
         .yt-top-panel {
             top: 0px;
@@ -107,13 +112,14 @@
     <div id="top-panel" class="yt-top-panel">
         <input id="search" type="search" class="yt-search mousetrap" autofocus/>
         <div id="player" class="yt-player"></div>
-        <div id="playlist" class="yt-playlist"></div>
+        <div id="playlist" class="yt-playlist scrollbar-light"></div>
     </div>
     <div id="mainview" class="yt-mainview"></div>
     <div id="video-counter" class="yt-video-counter"></div>
     <script>
         document.getElementById("search").onkeypress = function(e) {
             var code = (e.keyCode ? e.keyCode : e.which);
+            // code 13 is enter.
             if (code == 13) {
                 e.preventDefault();
                 var query = e.srcElement.value;
@@ -136,7 +142,6 @@
         var zoomStep = 5;
         var zoomMin = 5;
         var zoomMax = 800;
-
         function zoomBy(percent) {
             zoom += percent;
             zoom = Math.max(zoom, zoomMin);
@@ -388,7 +393,7 @@
                 focusSearch();
             });
             Mousetrap.bind('ctrl+v', function(e) {
-                playInVox(vidPlaying);
+                playInVox(getVidFromUrl());
             });
             Mousetrap.bind('ctrl+0', function(e) {
                 seekToPercent(0);
