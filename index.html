@@ -35,10 +35,43 @@
             float: left;
             height: 100%;
             width: 50%;
-            border-bottom-right-radius: 15px;
+            max-width: 50%;
+            border-bottom-right-radius: 5px;
             overflow: hidden;
         }
+        .yt-search {
+            box-sizing: border-box;
+            position: absolute;
+            left: 50%;
+            padding: 15px;
+            color: white;
+            height: 30px;
+            border-radius: 0px 0px 15px 15px;
+            border: none;
+            background: #222222;
+            width: 45%;
+            margin-left: 5px;
+        }
+        .yt-video-counter {
+            box-sizing: border-box;
+            font-family: sans-serif;
+            font-size: smaller;
+            color: #DDDDDD;
+            position: absolute;
+            left: 95%;
+            right: 0px;
+            margin-left: 10px;
+            height: 30px;
+            padding-left: 15px;
+            padding-top: 5px;
+            width: 5%;
+            background: #222222;
+            border-radius: 0px 0px 0px 15px;
+        }
         .yt-playlist {
+            background: #222222;
+            box-sizing: border-box;
+            border-radius: 15px 0px 0px 15px;
             color: #DDDDDD;
             font-family: sans-serif;
             font-size: smaller;
@@ -46,14 +79,14 @@
             overflow: scroll;
             overflow-x: hidden;
             overflow-y: scroll;
-            padding: 5px;
-            width: 45%;
+            padding: 15px;
+            padding-right: 15px;
             position: absolute;
+            top: 35px;
             bottom: 0px;
-            right: 0;
-            top: 25px;
             left: 50%;
-            margin: 5px;
+            right: 0px;
+            margin-left: 5px;
             font-weight: 200;
         }
         .yt-top-panel {
@@ -82,27 +115,6 @@
             border-radius: 15px;
             background: #222222;
             padding: 10px;
-        }
-        .yt-search {
-          padding: 5px;
-          color: white;
-          height: 25px;
-          border-radius: 5px;
-          border: none;
-          background: #222222;
-          width: 40%;
-          margin: 5px;
-        }
-        .yt-video-counter {
-            font-family: sans-serif;
-            color: #DDDDDD;
-            background: black;
-            position: fixed;
-            right: 5px;
-            top: 5px;
-            padding: 15px;
-            background: #222222;
-            border-radius: 50%;
         }
         .yt-next-button {
             position:fixed;
@@ -154,6 +166,7 @@
     </div>
     <div id="video-counter" class="yt-video-counter"></div>
     <script>
+        var ytPlayer = $(".yt-player")[0];
         document.getElementById("search").onkeypress = function(e) {
             var code = (e.keyCode ? e.keyCode : e.which);
             // code 13 is enter.
