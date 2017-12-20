@@ -200,6 +200,12 @@
             var url = 'com.coppertino.vox://youtube/track/play?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D' + vid;
             window.location.assign(url);
         }
+        function increaseVolume() {
+            player.setVolume(player.getVolume() + 10);
+        }
+        function decreaseVolume() {
+            player.setVolume(player.getVolume() - 10);
+        }
         ////////////////////////////////////////////
         // Playlist
         ////////////////////////////////////////////
@@ -357,10 +363,10 @@
             Mousetrap.bind('ctrl+h', function(e) {
                 resizeHeader(0);
             });
-            Mousetrap.bind('ctrl+,', function(e) {
+            Mousetrap.bind('ctrl+left', function(e) {
                 seekToOffset(-10.0);
             });
-            Mousetrap.bind('ctrl+.', function(e) {
+            Mousetrap.bind('ctrl+right', function(e) {
                 seekToOffset(+10.0);
             });
             Mousetrap.bind('ctrl+f', function(e) {
@@ -398,6 +404,12 @@
             });
             Mousetrap.bind('ctrl+9', function(e) {
                 seekToPercent(90);
+            });
+            Mousetrap.bind('ctrl+up', function(e) {
+                increaseVolume();
+            });
+            Mousetrap.bind('ctrl+down', function(e) {
+                decreaseVolume();
             });
         }
         function configure() {
