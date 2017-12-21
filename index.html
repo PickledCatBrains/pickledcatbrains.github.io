@@ -244,7 +244,6 @@
             var tryPlayVideo = function() {
                 if (player.getPlayerState() == YT.PlayerState.UNSTARTED) {
                     player.playVideo();
-                    player.seekTo(0);
                     setTimeout(tryPlayVideo, 100);
                 }
             };
