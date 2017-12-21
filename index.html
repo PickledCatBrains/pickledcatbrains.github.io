@@ -143,17 +143,17 @@
     <div id="background" class="yt-background"></div>
     <div id="video-counter" class="yt-video-counter"></div>
     <script>
-        var ytPlayer = $(".yt-player")[0];
+
         document.getElementById("search").onkeypress = function(e) {
             var code = (e.keyCode ? e.keyCode : e.which);
-            // code 13 is enter.
-            if (code == 13) {
+            if (code == $.ui.keyCode.ENTER) {
                 e.preventDefault();
-                var query = e.srcElement.value;
+                addSearchVideos(e.srcElement.value);
                 e.srcElement.value = "";
-                addSearchVideos(query);
             }
         };
+        var ytCounter = $(".yt-counter")[0];
+        var ytPlayer = $(".yt-player")[0];
         var ytTopPanel = $("#top-panel");
         ytTopPanel.resizable({handles: 's'});
         ytTopPanel.resize(function(){
@@ -333,20 +333,18 @@
         }
         var videosPerRelated;
         function addRelatedVideos(vid, count) {
-            var url =
-                'https://www.googleapis.com/youtube/v3/search?' +
-                'maxResults=50&part=snippet&type=video' +
-                '&key=' + apiKey +
-                '&relatedToVideoId=' + vid;
+            var url = 'https://www.googleapis.com/youtube/v3/search?' +
+                      'maxResults=50&part=snippet&type=video' +
+                      '&key=' + apiKey +
+                      '&relatedToVideoId=' + vid;
             addVideos(url, videosPerRelated, false);
         }
         var videosPerSearch;
         function addSearchVideos(query) {
-            var url =
-                'https://www.googleapis.com/youtube/v3/search?' +
-                'maxResults=50&part=snippet&type=video' +
-                '&key=' + apiKey +
-                '&q=' + encodeURIComponent(query);
+            var url = 'https://www.googleapis.com/youtube/v3/search?' +
+                      'maxResults=50&part=snippet&type=video' +
+                      '&key=' + apiKey +
+                      '&q=' + encodeURIComponent(query);
             addVideos(url, videosPerSearch, true);
         }
         function addVideos(url, max, prepend) {
@@ -398,10 +396,9 @@
             a.innerHTML += title;
 
             if (prepend) {
-              view.prepend(a);
-            }
-            else {
-              view.appendChild(a);
+                view.prepend(a);
+            } else {
+                view.appendChild(a);
             }
             var ev = document.getElementById(iid);
             var ea = document.getElementById(aid);
@@ -425,18 +422,16 @@
         var fullscreen = false;
         function toggleFullscreen() {
             fullscreen = !fullscreen;
-            var p = $(".yt-player")[0];
-            var c = $(".yt-video-counter")[0];
-
+            
             if (fullscreen) {
-                p.style.position = "fixed";
-                p.style.width = "100%";
-                c.style.display = "none";
+                ytPlayer.style.position = "fixed";
+                ytPlayer.style.width = "100%";
+                ytCounter.style.display = "none";
                 mainView.style.zIndex = -1;
             } else {
-                p.style.position = "absolute";
-                p.style.width = "50%";
-                c.style.display = "initial";
+                ytPlayer.style.position = "absolute";
+                ytPlayer.style.width = "50%";
+                ytCounter.style.display = "initial";
                 mainView.style.zIndex = 0;
             }
         }
