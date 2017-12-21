@@ -250,7 +250,6 @@
             queueVideo(getVidFromUrl(), title);
         }
         function onPlayerStateChange(event) {
-            console.log("state: " + event.data);
             if (event.data == YT.PlayerState.ENDED) {
                 dequeueVideo();
             }
