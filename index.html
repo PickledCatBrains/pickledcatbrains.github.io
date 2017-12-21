@@ -254,6 +254,9 @@
             if (event.data == 0) {
                 dequeueVideo();
             }
+            if (event.data == 3) {
+                player.playVideo();
+            }
         }
         function stopVideo() {
             player.stopVideo();
@@ -311,6 +314,7 @@
                 player.loadVideoById(vid);
                 // Ignore any progress that might have been saved by YouTube.
                 player.seekTo(0);
+                document.title = title;
             }
         }
         function dequeueVideo() {
@@ -327,6 +331,7 @@
             if (player !== undefined) {
                 player.loadVideoById(vid);
                 player.seekTo(entry["time"]);
+                document.title = entry["title"];
             }
         }
         function getVidFromUrl() {
@@ -429,28 +434,30 @@
                 };
             };
         }
-        function setAspectRatioStandard() {
-
-        }
-        function setAspectRatioWide() {
+        function togglePausePlay() {
+            if (player.getPlayerState() !== 1) {
+                player.playVideo();
+            } else {
+                player.pauseVideo();
+            }
         }
         function bindShortcuts() {
-            Mousetrap.bind('ctrl+n', function(e) {
+            Mousetrap.bind('ctrl+v', function(e) {
                 skipVideo();
             });
-            Mousetrap.bind('ctrl+h', function(e) {
+            Mousetrap.bind('ctrl+d', function(e) {
                 resizeHeader(0);
             });
-            Mousetrap.bind('ctrl+left', function(e) {
+            Mousetrap.bind('ctrl+z', function(e) {
                 seekToOffset(-10.0);
             });
-            Mousetrap.bind('ctrl+right', function(e) {
+            Mousetrap.bind('ctrl+c', function(e) {
                 seekToOffset(+10.0);
             });
             Mousetrap.bind('ctrl+f', function(e) {
                 focusSearch();
             });
-            Mousetrap.bind('ctrl+v', function(e) {
+            Mousetrap.bind('ctrl+b', function(e) {
                 playInVox(getVidFromUrl());
             });
             Mousetrap.bind('ctrl+0', function(e) {
@@ -489,19 +496,22 @@
             Mousetrap.bind('ctrl+down', function(e) {
                 decreaseVolume();
             });
-            Mousetrap.bind('ctrl+=', function(e) {
+            Mousetrap.bind('ctrl+w', function(e) {
                 zoomBy(+zoomStep);
             });
-            Mousetrap.bind('ctrl+-', function(e) {
+            Mousetrap.bind('ctrl+q', function(e) {
                 zoomBy(-zoomStep);
             });
-            Mousetrap.bind('ctrl+w', function(e) {
+            Mousetrap.bind('ctrl+a', function(e) {
                 // SD aspect ratio
                 resizeHeader(ytTopPanel[0].clientWidth / 2 / 16 * 9);
             });
             Mousetrap.bind('ctrl+s', function(e) {
                 // HD aspect ratio
                 resizeHeader(ytTopPanel[0].clientWidth / 2 / 4 * 3);
+            });
+            Mousetrap.bind('ctrl+x', function(e) {
+                togglePausePlay();
             });
         }
         function configure() {
