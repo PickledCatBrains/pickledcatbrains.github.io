@@ -250,11 +250,21 @@
             queueVideo(getVidFromUrl(), title);
         }
         function onPlayerStateChange(event) {
+            console.log("state: " + event.data);
             if (event.data == YT.PlayerState.ENDED) {
                 dequeueVideo();
             }
-            if (event.data == YT.PlayerState.CUED) {
-                player.playVideo();
+            if (event.data == YT.PlayerState.UNSTARTED) {
+                // When a video does not start playing, persist in our attempts
+                // until it does.
+                var tryPlayVideo = function() {
+                    if (player.getPlayerState() == YT.PlayerState.UNSTARTED) {
+                        player.playVideo();
+                        player.seekTo(0);
+                        setTimeout(f, 100);
+                    }
+                };
+                setTimeout(tryPlayVideo, 100);
             }
         }
         function stopVideo() {
@@ -311,6 +321,7 @@
             window.location.hash = "#" + vid;
             if (player !== undefined) {
                 player.loadVideoById(vid);
+                player.playVideo();
                 // Ignore any progress that might have been saved by YouTube.
                 player.seekTo(0);
                 document.title = title;
