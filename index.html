@@ -143,6 +143,16 @@
     <div id="background" class="yt-background"></div>
     <div id="video-counter" class="yt-video-counter"></div>
     <script>
+        var ytCounter = $(".yt-counter")[0];
+        var ytPlayer = $(".yt-player")[0];
+        var ytTopPanel = $("#top-panel");
+        var mainView = document.getElementById("mainview");
+        var background = document.getElementById("background");
+        var headerHeight = 0;
+        var zoom = 100;
+        var zoomStep = 5;
+        var zoomMin = 5;
+        var zoomMax = 800;
 
         document.getElementById("search").onkeypress = function(e) {
             var code = (e.keyCode ? e.keyCode : e.which);
@@ -152,9 +162,6 @@
                 e.srcElement.value = "";
             }
         };
-        var ytCounter = $(".yt-counter")[0];
-        var ytPlayer = $(".yt-player")[0];
-        var ytTopPanel = $("#top-panel");
         ytTopPanel.resizable({handles: 's'});
         ytTopPanel.resize(function(){
             resizeHeader(ytTopPanel[0].style.height);
@@ -162,13 +169,6 @@
         function focusSearch() {
             $("#search")[0].focus();
         }
-        var headerHeight = 0;
-        var mainView = document.getElementById("mainview");
-        var background = document.getElementById("background");
-        var zoom = 100;
-        var zoomStep = 5;
-        var zoomMin = 5;
-        var zoomMax = 800;
         function zoomBy(percent) {
             zoom += percent;
             zoom = Math.max(zoom, zoomMin);
@@ -322,12 +322,12 @@
         // Loading of related videos.
         ////////////////////////////////////////////
         var apiKey = null;
-        function GetJSON(url, f) {
+        function GetJSON(url, callback) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
             xhr.responseType = 'json';
             xhr.onload = function() {
-                f(xhr.response);
+                callback(xhr.response);
             };
             xhr.send();
         }
@@ -406,10 +406,10 @@
             ev.onclick = function() {
                 queueVideo(vid, title);
                 addRelatedVideos(vid);
-                ea.setAttribute('class', 'yt-video-link-followed');
                 ev.onclick = function() {
                     queueVideo(vid, title);
                 };
+                ea.setAttribute('class', 'yt-video-link-followed');
             };
         }
         function togglePausePlay() {
@@ -422,7 +422,7 @@
         var fullscreen = false;
         function toggleFullscreen() {
             fullscreen = !fullscreen;
-            
+
             if (fullscreen) {
                 ytPlayer.style.position = "fixed";
                 ytPlayer.style.width = "100%";
