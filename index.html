@@ -227,18 +227,16 @@
             if (event.data == YT.PlayerState.ENDED) {
                 dequeueVideo();
             }
-            if (event.data == YT.PlayerState.UNSTARTED) {
-                // When a video does not start playing, persist in our attempts
-                // until it does.
-                var tryPlayVideo = function() {
-                    if (player.getPlayerState() == YT.PlayerState.UNSTARTED) {
-                        player.playVideo();
-                        player.seekTo(0);
-                        setTimeout(tryPlayVideo, 100);
-                    }
-                };
-                setTimeout(tryPlayVideo, 100);
-            }
+            // When a video does not start playing, persist in our attempts
+            // until it does.
+            var tryPlayVideo = function() {
+                if (player.getPlayerState() == YT.PlayerState.UNSTARTED) {
+                    player.playVideo();
+                    player.seekTo(0);
+                    setTimeout(tryPlayVideo, 100);
+                }
+            };
+            tryPlayVideo();
         }
         function stopVideo() {
             player.stopVideo();
