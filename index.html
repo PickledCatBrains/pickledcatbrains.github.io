@@ -261,7 +261,7 @@
                     if (player.getPlayerState() == YT.PlayerState.UNSTARTED) {
                         player.playVideo();
                         player.seekTo(0);
-                        setTimeout(f, 100);
+                        setTimeout(tryPlayVideo, 100);
                     }
                 };
                 setTimeout(tryPlayVideo, 100);
