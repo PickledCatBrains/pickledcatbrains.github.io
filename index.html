@@ -36,9 +36,9 @@
             float: left;
             height: 100%;
             width: 50%;
-            max-width: 50%;
             border-bottom-right-radius: 15px;
             overflow: hidden;
+            z-index: 10;
         }
         .yt-search {
             box-sizing: border-box;
@@ -107,7 +107,7 @@
             position: fixed;
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
+            justify-content: space-evenly;
             overflow-y: scroll;
             top: 15px;
             bottom: 10px;
@@ -235,7 +235,6 @@
                     width: '100%',
                     playerVars: {
                         'autoplay': 1,
-                        'controls': 1,
                         'iv_load_policy': 3
                     },
                     videoId: getVidFromUrl(),
@@ -250,11 +249,10 @@
             queueVideo(getVidFromUrl(), title);
         }
         function onPlayerStateChange(event) {
-            // The video has finished playing.
-            if (event.data == 0) {
+            if (event.data == YT.PlayerState.ENDED) {
                 dequeueVideo();
             }
-            if (event.data == 3) {
+            if (event.data == YT.PlayerState.CUED) {
                 player.playVideo();
             }
         }
@@ -441,6 +439,36 @@
                 player.pauseVideo();
             }
         }
+        var fullscreen = false;
+        function toggleFullscreen() {
+            fullscreen = !fullscreen;
+            var p = $(".yt-player")[0];
+            var c = $(".yt-video-counter")[0];
+
+            if (fullscreen) {
+                p.style.position = "fixed";
+                p.style.width = "100%";
+                c.style.display = "none";
+                mainView.style.zIndex = -1;
+            } else {
+                p.style.position = "absolute";
+                p.style.width = "50%";
+                c.style.display = "initial";
+                mainView.style.zIndex = 1;
+            }
+        }
+        function increasePlaybackRate() {
+            var ar = player.getAvailablePlaybackRates();
+            var cr = player.getPlaybackRate();
+            var ix = Math.min(ar.indexOf(cr) + 1, ar.length - 1);
+            player.setPlaybackRate(ar[ix]);
+        }
+        function decreasePlaybackRate() {
+            var ar = player.getAvailablePlaybackRates();
+            var cr = player.getPlaybackRate();
+            var ix = Math.max(ar.indexOf(cr) - 1, 0);
+            player.setPlaybackRate(ar[ix]);
+        }
         function bindShortcuts() {
             Mousetrap.bind('ctrl+v', function(e) {
                 skipVideo();
@@ -454,7 +482,7 @@
             Mousetrap.bind('ctrl+c', function(e) {
                 seekToOffset(+10.0);
             });
-            Mousetrap.bind('ctrl+f', function(e) {
+            Mousetrap.bind('ctrl+g', function(e) {
                 focusSearch();
             });
             Mousetrap.bind('ctrl+b', function(e) {
@@ -512,6 +540,15 @@
             });
             Mousetrap.bind('ctrl+x', function(e) {
                 togglePausePlay();
+            });
+            Mousetrap.bind('ctrl+f', function(e) {
+                toggleFullscreen();
+            });
+            Mousetrap.bind('ctrl+,', function(e) {
+                decreasePlaybackRate();
+            });
+            Mousetrap.bind('ctrl+.', function(e) {
+                increasePlaybackRate();
             });
         }
         function configure() {
